@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>California Housing Price Predictor</title>
+
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #222;
+        margin-bottom: 10px;
+    }
+
+    .description {
+        color: #555;
+        margin-bottom: 25px;
+    }
+
+    .field {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 15px;
+    }
+
+    button {
+        width: 100%;
+        margin-top: 10px;
+        padding: 12px 20px;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #1d4ed8;
+    }
+
+    #result {
+        margin-top: 25px;
+        padding: 15px;
+        background-color: #eef6ff;
+        border-radius: 5px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .error {
+        background-color: #ffecec !important;
+        color: #b00020;
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<div class="container">
+
+    <h1>California Housing Price Predictor</h1>
+
+    <p class="description">
+        Enter the characteristics of a California housing district
+        to predict its median house value.
+    </p>
+
+
+    <form id="predictionForm">
+
+
+        <div class="field">
+
+            <label for="MedInc">
+                Median Income
+            </label>
+
+            <input
+                type="number"
+                id="MedInc"
+                step="any"
+                placeholder="e.g. 8.3"
+                required
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="HouseAge">
+                House Age
+            </label>
+
+            <input
+                type="number"
+                id="HouseAge"
+                step="any"
+                placeholder="e.g. 25"
+                required
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="AveRooms">
+                Average Rooms
+            </label>
+
+            <input
+                type="number"
+                id="AveRooms"
+                step="any"
+                placeholder="e.g. 6.2"
+                required
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="AveBedrms">
+                Average Bedrooms
+            </label>
+
+            <input
+                type="number"
+                id="AveBedrms"
+                step="any"
+                placeholder="e.g. 1.1"
+                required
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="Population">
+                Population
+            </label>
+
+            <input
+                type="number"
+                id="Population"
+                step="any"
+                placeholder="e.g. 1200"
+                required
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="AveOccup">
+                Average Occupancy
+            </label>
+
+            <input
+                type="number"
+                id="AveOccup"
+                step="any"
+                placeholder="e.g. 2.7"
+                required
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="Latitude">
+                Latitude
+            </label>
+
+            <input
+                type="number"
+                id="Latitude"
+                step="any"
+                placeholder="e.g. 37.8"
+                required
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="Longitude">
+                Longitude
+            </label>
+
+            <input
+                type="number"
+                id="Longitude"
+                step="any"
+                placeholder="e.g. -122.4"
+                required
+            >
+
+        </div>
+
+
+        <button type="submit">
+            Predict House Value
+        </button>
+
+    </form>
+
+
+    <div id="result" style="display: none;"></div>
+
+</div>
+
+
+<script>
+
+    document
+        .getElementById("predictionForm")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const result = document.getElementById("result");
+
+            const data = {
+
+                MedInc:
+                    parseFloat(
+                        document.getElementById("MedInc").value
+                    ),
+
+                HouseAge:
+                    parseFloat(
+                        document.getElementById("HouseAge").value
+                    ),
+
+                AveRooms:
+                    parseFloat(
+                        document.getElementById("AveRooms").value
+                    ),
+
+                AveBedrms:
+                    parseFloat(
+                        document.getElementById("AveBedrms").value
+                    ),
+
+                Population:
+                    parseFloat(
+                        document.getElementById("Population").value
+                    ),
+
+                AveOccup:
+                    parseFloat(
+                        document.getElementById("AveOccup").value
+                    ),
+
+                Latitude:
+                    parseFloat(
+                        document.getElementById("Latitude").value
+                    ),
+
+                Longitude:
+                    parseFloat(
+                        document.getElementById("Longitude").value
+                    )
+            };
+
+
+            result.style.display = "block";
+
+            result.className = "";
+
+            result.innerHTML = "Making prediction...";
+
+
+            try {
+
+                const response = await fetch("/predict", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(data)
+
+                });
+
+
+                const output = await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        output.detail || "Prediction failed"
+                    );
+
+                }
+
+
+                const predictedValue =
+                    output.predicted_house_value;
+
+
+                // California Housing target is in
+                // units of $100,000.
+
+                const dollarValue =
+                    predictedValue * 100000;
+
+
+                result.innerHTML =
+                    "Predicted House Value: $" +
+                    dollarValue.toLocaleString(
+                        undefined,
+                        {
+                            maximumFractionDigits: 0
+                        }
+                    );
+
+
+            } catch (error) {
+
+                result.className = "error";
+
+                result.innerHTML =
+                    "Error: " + error.message;
+
+            }
+
+        });
+
+</script>
+```
+
+</body>
+
+</html>

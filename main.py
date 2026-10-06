@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import pickle
 import numpy as np
@@ -23,6 +24,11 @@ class HousingData(BaseModel):
     AveOccup: float
     Latitude: float
     Longitude: float
+    
+@app.get("/")
+def home():
+    return FileResponse("index.html")
+    
     
 @app.get("/health")
 def health_check():
